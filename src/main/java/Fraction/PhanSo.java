@@ -1,138 +1,144 @@
 package Fraction;
 
+import java.util.Scanner;
+
 public class PhanSo {
 
     private int tuSo;
     private int mauSo;
 
-    public void init(int tuSo, int mauSo) {
-        this.tuSo = tuSo;
-        this.mauSo = mauSo;
+    public int getTuSo() {
+        return this.tuSo;
+    }
+
+    public int getMauSo() {
+        return this.mauSo;
+    }
+
+    @Override
+    public String toString() {
+        return "PhanSo{" +
+                "tuSo=" + tuSo +
+                ", mauSo=" + mauSo +
+                '}';
+    }
+
+    public void input() {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Tu so: ");
+        tuSo = sc.nextInt();
+        System.out.print("Mau so: ");
+        mauSo = sc.nextInt();
     }
 
     public void print() {
+
         System.out.format("%d/%d\n", this.tuSo, this.mauSo);
     }
 
-    public void rutGon() {
+    private static int gcd(int a, int b) {
+        if (a == b)
+            return a;
 
-        for (int i = this.tuSo; i > 1; i--) {
-            if (this.tuSo % i == 0 && this.mauSo % i == 0) {
-                this.tuSo /= i;
-                this.mauSo /= i;
-                break;
-            }
-        }
-        System.out.println(this.tuSo + "/" + this.mauSo);
-    }
-
-    public PhanSo sumPS(PhanSo x) {
-        PhanSo sumPS = new PhanSo();
-
-        this.tuSo = (tuSo * x.mauSo + mauSo * x.tuSo);
-        this.mauSo = (mauSo * x.mauSo);
-//        System.out.println(this.tuSo + "/" + this.mauSo);
-
-        return sumPS;
-
-    }
-
-    public PhanSo sub(PhanSo x) {
-        PhanSo sub = new PhanSo();
-
-        this.tuSo = (tuSo * x.mauSo - mauSo * x.tuSo);
-        this.mauSo = (mauSo * x.mauSo);
-//        System.out.println(this.tuSo + "/" + this.mauSo);
-
-        return sub;
-    }
-
-    public PhanSo mul(PhanSo x) {
-        PhanSo mul = new PhanSo();
-
-        this.tuSo = (tuSo * x.tuSo);
-        this.mauSo = (mauSo * x.mauSo);
-//        System.out.println(this.tuSo + "/" + this.mauSo);
-
-        return mul;
-    }
-
-    public PhanSo div(PhanSo x) {
-        PhanSo div = new PhanSo();
-
-        this.tuSo = (tuSo * x.mauSo);
-        this.mauSo = (mauSo * x.tuSo);
-//        System.out.println(this.tuSo + "/" + this.mauSo);
-
-        return div;
-    }
-
-    public boolean frac() {
-        boolean frac = true;
-        for (int i = tuSo; i > 1; i--) {
-            if (tuSo % i == 0 && mauSo % i == 0) {
-                frac = false;
-                break;
-            }
-        }
-        return frac;
-    }
-
-    public PhanSo quiDong(PhanSo x) {
-        int mau = 0;
-
-        if (this.mauSo != x.mauSo) {
-            for (int i = this.mauSo; i >= 1; i--) {
-
-                if (this.mauSo % i == 0 && x.mauSo % i == 0) {
-                    mau = (this.mauSo * x.mauSo) / i;
-                    this.tuSo = (tuSo * x.mauSo) / i;
-                    x.tuSo = (x.tuSo * this.mauSo) / i;
-                    break;
-                }
-            }
-
+        if (a > b) {
+            return gcd(a - b, b);
         }
 
-        System.out.println(this.tuSo + "/" + mau);
-        System.out.println(x.tuSo + "/" + mau);
-
-        return null;
+        return gcd(a, b - a);
     }
 
-    public boolean phanSoDuong() {
-        boolean test = false;
+    public boolean isReducible() {
+        int gcd = gcd(Math.abs(this.tuSo), Math.abs(this.mauSo));
 
-        if ((this.tuSo > 0 && this.mauSo > 0) || (this.tuSo < 0 && this.mauSo < 0)) {
-            test = true;
+        if (gcd == 1) {
+            return false;
         }
 
-        return test;
+        return true;
     }
 
-    public PhanSo nhoHon(PhanSo x) {
-        boolean nhoHon = false;
-        int mau1 = 0;
+    public boolean isPositive() {
+        if (this.tuSo == 0)
+            return false;
 
-        if (this.mauSo != x.mauSo) {
-            for (int i = this.mauSo; i >= 1; i--) {
+        if (this.tuSo > 0 && this.mauSo > 0)
+            return true;
 
-                if (this.mauSo % i == 0 && x.mauSo % i == 0) {
-                    mau1 = (this.mauSo * x.mauSo) / i;
-                    this.tuSo = (tuSo * x.mauSo) / i;
-                    x.tuSo = (x.tuSo * this.mauSo) / i;
-                    break;
-                }
-            }
+        if (this.tuSo < 0 && this.mauSo < 0)
+            return true;
 
-        }
-
-        if (this.tuSo < x.mauSo) {
-            nhoHon = true;
-        }
-
-        System.out.println(nhoHon);
-        return null;
+        return false;
     }
 
+    public void reduce() {
+        int gcd = gcd(Math.abs(this.tuSo), Math.abs(this.mauSo));
+
+        this.tuSo /= gcd;
+        this.mauSo /= gcd;
+    }
+
+    public int compareTo(PhanSo another) {
+        long tmp1 = this.tuSo * another.mauSo;
+        long tmp2 = this.mauSo * another.tuSo;
+
+        if (tmp1 > tmp2)
+            return 1;
+
+        if (tmp1 < tmp2)
+            return -1;
+
+        return 0;
+    }
+
+    public void plus(PhanSo another) {
+        int tmp_ts = this.tuSo * another.mauSo + this.mauSo * another.tuSo;
+        int tmp_ms = this.mauSo * another.mauSo;
+
+        this.tuSo = tmp_ts;
+        this.mauSo = tmp_ms;
+
+        this.reduce();
+    }
+
+    public void subtraction(PhanSo another) {
+        int sub_ts = this.tuSo * another.mauSo - this.mauSo * another.tuSo;
+        int sub_ms = this.mauSo * another.mauSo;
+
+        this.tuSo = sub_ts;
+        this.mauSo = sub_ms;
+
+        this.reduce();
+    }
+
+    public void multiplication(PhanSo another) {
+        int mul_ts = this.tuSo * another.tuSo;
+        int mul_ms = this.mauSo * another.mauSo;
+
+        this.tuSo = mul_ts;
+        this.mauSo = mul_ms;
+
+        this.reduce();
+    }
+
+    public void division(PhanSo another) {
+        int div_ts = this.tuSo * another.mauSo;
+        int div_ms = this.mauSo * another.tuSo;
+
+        this.tuSo = div_ts;
+        this.mauSo = div_ms;
+
+        this.reduce();
+    }
+
+    public static PhanSo parseFromString(String str) {
+        String[] parts = str.split("/");
+
+        PhanSo ps = new PhanSo();
+        ps.tuSo = Integer.parseInt(parts[0]);
+        ps.mauSo = Integer.parseInt(parts[1]);
+
+        return ps;
+    }
 }
+
